@@ -1,6 +1,6 @@
 package com.flashsale.inventory_service.Controller;
 
-
+import org.springframework.data.redis.core.RedisTemplate;
 //import com.flashsale.inventory_service.model.Product;
 //import com.flashsale.inventory_service.repository.ProductRepository;
 import com.flashsale.inventory_service.Entity.Product;
@@ -17,6 +17,8 @@ public class ProductController {
 
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @PostMapping
     public Product createProduct(@RequestBody Product product) {
@@ -53,5 +55,11 @@ public class ProductController {
         }
         productRepository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/test-redis")
+    public String testRedis() {
+        redisTemplate.opsForValue().set("test-key", "Hello Redis");
+        Object value = redisTemplate.opsForValue().get("test-key");
+        return "Redis says: " + value;
     }
 }
